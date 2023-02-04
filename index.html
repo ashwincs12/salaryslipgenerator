@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <style>
+      /* Add some styling for the salary slip */
+      .salary-slip,
+      h1 {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        /* width: 400px; */
+        text-align: center;
+      }
+
+      .salary-slip h1 {
+        text-align: center;
+      }
+
+      table {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .salary-slip td,
+      th {
+        padding: 10px;
+      }
+      #header {
+        background-color: lightgray;
+        display: flex;
+        align-items: center;
+      }
+      #generate-slip {
+        background-color: grey;
+        border: none;
+        color: black;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      <img src="logo.png" alt="" srcset="" width="" 40px />
+      <center>
+        <h1>
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+          Salary Slip Generator
+        </h1>
+      </center>
+    </div>
+    <div class="salary-slip">
+      <table>
+        <tr>
+          <td>Employee Name:</td>
+          <td><input type="text" id="name" /></td>
+        </tr>
+        <tr>
+          <td>Monthly Salary:</td>
+          <td><input type="number" id="monthly-salary" /></td>
+        </tr>
+        <tr>
+          <td>Hourly Salary:</td>
+          <td><input type="number" id="hourly-salary" /></td>
+        </tr>
+        <tr>
+          <td>Working Hours:</td>
+          <td><input type="number" id="working-hours" /></td>
+        </tr>
+        <tr>
+          <td>Advance:</td>
+          <td><input type="number" id="advance" /></td>
+        </tr>
+        <tr>
+          <td>Loan:</td>
+          <td><input type="number" id="loan" /></td>
+        </tr>
+        <tr>
+          <td>Purchase:</td>
+          <td><input type="number" id="purchase" /></td>
+        </tr>
+        <tr>
+          <td>ESI:</td>
+          <td><input type="number" id="esi" /></td>
+        </tr>
+        <tr>
+          <td>Net Payable:</td>
+          <td id="total-salary"></td>
+        </tr>
+      </table>
+      <button id="generate-slip">Generate Slip</button>
+    </div>
+
+    <script>
+      const generateSlipButton = document.getElementById("generate-slip");
+      const nameInput = document.getElementById("name");
+      const monthlySalaryInput = document.getElementById("monthly-salary");
+      const hourlySalaryInput = document.getElementById("hourly-salary");
+      const workingHoursInput = document.getElementById("working-hours");
+      const advanceInput = document.getElementById("advance");
+      const loanInput = document.getElementById("loan");
+      const purchaseInput = document.getElementById("purchase");
+      const esiInput = document.getElementById("esi");
+      const totalSalaryDisplay = document.getElementById("total-salary");
+
+      generateSlipButton.addEventListener("click", () => {
+        const name = nameInput.value;
+        const monthlySalary = parseFloat(monthlySalaryInput.value);
+        const hourlySalary = parseFloat(hourlySalaryInput.value);
+        const workingHours = parseFloat(workingHoursInput.value);
+        const advance = parseFloat(advanceInput.value);
+        const loan = parseFloat(loanInput.value);
+        const purchase = parseFloat(purchaseInput.value);
+        const esi = parseFloat(esiInput.value);
+        const totalDeduction = advance + loan + purchase + esi;
+        const totalSalary = hourlySalary * workingHours - totalDeduction;
+        totalSalaryDisplay.textContent = totalSalary;
+
+        // Create the PDF document
+        const pdf = new jsPDF();
+        pdf.setFontType("bold");
+        pdf.text(35, 10, "SALARY SLIP");
+        pdf.setFontType("normal");
+        pdf.text(20, 20, "Employee Name:");
+        pdf.text(20, 20, "\t\t\t\t" + name);
+        pdf.text(20, 30, "Mothly Salary:");
+        pdf.text(20, 30, "\t\t\t\t" + monthlySalary);
+        pdf.text(20, 40, "Worked Hours:");
+        pdf.text(20, 40, "\t\t\t\t" + workingHours);
+        pdf.setFontType("bold");
+        pdf.text(20, 50, "DEDUCTIONS");
+        pdf.setFontType("normal");
+        pdf.text(20, 60, "Advance:");
+        pdf.text(20, 60, "\t\t\t\t" + advance);
+        pdf.text(20, 70, "Loan:");
+        pdf.text(20, 70, "\t\t\t\t" + loan);
+        pdf.text(20, 80, "Purchase:");
+        pdf.text(20, 80, "\t\t\t\t" + purchase);
+        pdf.text(20, 90, "ESI:");
+        pdf.text(20, 90, "\t\t\t\t" + esi);
+
+        pdf
+          .text(20, 100, "Net Payable:")
+          .setFontSize(20)
+          .setFont(undefined, "bold");
+        pdf
+          .text(20, 100, "\t\t\t" + totalSalary)
+          .setFontSize(20)
+          .setFont(undefined, "bold");
+        // Download the PDF document
+        pdf.save(`${name}-salary-slip.pdf`);
+      });
+    </script>
+  </body>
+</html>
